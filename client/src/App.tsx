@@ -16,6 +16,7 @@ import ClientLogin from "@/pages/client-login";
 import ClientDocuments from "@/pages/client-documents";
 import ClientOpticians from "@/pages/client-opticians";
 import ClientConfirmation from "@/pages/client-confirmation";
+import Admin from "@/pages/admin";
 
 function Router() {
   return (
@@ -36,6 +37,9 @@ function Router() {
       <Route path="/client-documents" component={ClientDocuments} />
       <Route path="/client-opticians" component={ClientOpticians} />
       <Route path="/client-confirmation" component={ClientConfirmation} />
+      
+      {/* Route administration */}
+      <Route path="/admin" component={Admin} />
       
       <Route component={NotFound} />
     </Switch>
