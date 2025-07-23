@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, FileText, CreditCard, User, ArrowLeft } from "lucide-react";
 import { OpticianData } from "@/lib/data/opticiansData";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ClientConfirmation() {
   const [, setLocation] = useLocation();
   const [clientData, setClientData] = useState<any>(null);
   const [documents, setDocuments] = useState<any>(null);
   const [selectedOptician, setSelectedOptician] = useState<OpticianData | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Récupérer les données du localStorage
@@ -22,12 +24,47 @@ export default function ClientConfirmation() {
     if (optician) setSelectedOptician(JSON.parse(optician));
   }, []);
 
-  const handleNewRequest = () => {
-    // Nettoyer le localStorage et recommencer le processus
-    localStorage.removeItem('clientData');
-    localStorage.removeItem('clientDocuments');
-    localStorage.removeItem('selectedOptician');
-    setLocation('/client-login');
+  const handleNewRequest = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/client/submit-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          opticienId: selectedOptician?.id,
+          ordonnanceFilename: documents?.ordonnance,
+          mutuelleFilename: documents?.mutuelle
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Demande soumise !",
+          description: "Votre demande a été envoyée avec succès. Vous recevrez une réponse sous 48h."
+        });
+
+        // Rediriger vers le dashboard client
+        setTimeout(() => {
+          setLocation('/client-dashboard');
+        }, 2000);
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la soumission",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleBackToOpticians = () => {

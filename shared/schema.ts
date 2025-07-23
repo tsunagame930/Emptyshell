@@ -14,29 +14,44 @@ export const opticiens = pgTable("opticiens", {
   adresse: text("adresse"),
   ville: text("ville"),
   codePostal: text("code_postal"),
-  siret: text("siret"),
+  siret: text("siret").unique(),
+  nomMagasin: text("nom_magasin"),
+  specialites: text("specialites").array(),
+  marques: text("marques").array(),
+  description: text("description"),
+  horaires: jsonb("horaires"),
+  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Client Submissions table
+// Clients table
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  nom: text("nom").notNull(),
+  prenom: text("prenom").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  telephone: text("telephone"),
+  opticienId: integer("opticien_id").references(() => opticiens.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Client Submissions table - now linked to clients
 export const clientSubmissions = pgTable("client_submissions", {
   id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
   opticienId: integer("opticien_id").notNull().references(() => opticiens.id),
-  nomClient: text("nom_client").notNull(),
-  prenomClient: text("prenom_client").notNull(),
-  emailClient: text("email_client").notNull(),
-  telephoneClient: text("telephone_client"),
   ordonnanceFilename: text("ordonnance_filename"),
-  mutuelleName: text("mutuelle_name"),
   mutuelleFilename: text("mutuelle_filename"),
-  statut: text("statut").notNull().default("en_attente"), // en_attente, valide, refuse, incomplet
+  statut: text("statut").notNull().default("en_attente"), // en_attente, en_cours, termine, annule
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Cagnottes table
+// Cagnottes table - linked to client
 export const cagnottes = pgTable("cagnottes", {
   id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
   opticienId: integer("opticien_id").notNull().references(() => opticiens.id),
   clientSubmissionId: integer("client_submission_id").references(() => clientSubmissions.id),
   nom: text("nom").notNull(),
@@ -47,9 +62,10 @@ export const cagnottes = pgTable("cagnottes", {
   dateLivraison: timestamp("date_livraison"),
 });
 
-// Paiements table
+// Paiements table - linked to client
 export const paiements = pgTable("paiements", {
   id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
   opticienId: integer("opticien_id").notNull().references(() => opticiens.id),
   cagnotteId: integer("cagnotte_id").references(() => cagnottes.id),
   montant: decimal("montant", { precision: 10, scale: 2 }).notNull(),
@@ -61,9 +77,10 @@ export const paiements = pgTable("paiements", {
   datePaiement: timestamp("date_paiement"),
 });
 
-// Livraisons table
+// Livraisons table - linked to client
 export const livraisons = pgTable("livraisons", {
   id: serial("id").primaryKey(),
+  clientId: integer("client_id").notNull().references(() => clients.id),
   opticienId: integer("opticien_id").notNull().references(() => opticiens.id),
   paiementId: integer("paiement_id").references(() => paiements.id),
   adresseLivraison: text("adresse_livraison").notNull(),
@@ -94,6 +111,7 @@ export const produits = pgTable("produits", {
 
 // Relations
 export const opticiensRelations = relations(opticiens, ({ many }) => ({
+  clients: many(clients),
   clientSubmissions: many(clientSubmissions),
   cagnottes: many(cagnottes),
   paiements: many(paiements),
@@ -101,7 +119,23 @@ export const opticiensRelations = relations(opticiens, ({ many }) => ({
   produits: many(produits),
 }));
 
+// Add clients relations
+export const clientsRelations = relations(clients, ({ one, many }) => ({
+  opticien: one(opticiens, {
+    fields: [clients.opticienId],
+    references: [opticiens.id],
+  }),
+  clientSubmissions: many(clientSubmissions),
+  cagnottes: many(cagnottes),
+  paiements: many(paiements),
+  livraisons: many(livraisons),
+}));
+
 export const clientSubmissionsRelations = relations(clientSubmissions, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [clientSubmissions.clientId],
+    references: [clients.id],
+  }),
   opticien: one(opticiens, {
     fields: [clientSubmissions.opticienId],
     references: [opticiens.id],
@@ -110,6 +144,10 @@ export const clientSubmissionsRelations = relations(clientSubmissions, ({ one, m
 }));
 
 export const cagnottesRelations = relations(cagnottes, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [cagnottes.clientId],
+    references: [clients.id],
+  }),
   opticien: one(opticiens, {
     fields: [cagnottes.opticienId],
     references: [opticiens.id],
@@ -122,6 +160,10 @@ export const cagnottesRelations = relations(cagnottes, ({ one, many }) => ({
 }));
 
 export const paiementsRelations = relations(paiements, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [paiements.clientId],
+    references: [clients.id],
+  }),
   opticien: one(opticiens, {
     fields: [paiements.opticienId],
     references: [opticiens.id],
@@ -134,6 +176,10 @@ export const paiementsRelations = relations(paiements, ({ one, many }) => ({
 }));
 
 export const livraisonsRelations = relations(livraisons, ({ one }) => ({
+  client: one(clients, {
+    fields: [livraisons.clientId],
+    references: [clients.id],
+  }),
   opticien: one(opticiens, {
     fields: [livraisons.opticienId],
     references: [opticiens.id],
@@ -153,6 +199,11 @@ export const produitsRelations = relations(produits, ({ one }) => ({
 
 // Insert schemas
 export const insertOpticienSchema = createInsertSchema(opticiens).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertClientSchema = createInsertSchema(clients).omit({
   id: true,
   createdAt: true,
 });
@@ -185,6 +236,9 @@ export const insertProduitSchema = createInsertSchema(produits).omit({
 // Types
 export type Opticien = typeof opticiens.$inferSelect;
 export type InsertOpticien = z.infer<typeof insertOpticienSchema>;
+
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = z.infer<typeof insertClientSchema>;
 
 export type ClientSubmission = typeof clientSubmissions.$inferSelect;
 export type InsertClientSubmission = z.infer<typeof insertClientSubmissionSchema>;

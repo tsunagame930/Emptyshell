@@ -1,5 +1,6 @@
 import { 
   opticiens, 
+  clients,
   clientSubmissions, 
   cagnottes, 
   paiements, 
@@ -8,6 +9,8 @@ import {
   users,
   type Opticien,
   type InsertOpticien,
+  type Client,
+  type InsertClient,
   type ClientSubmission,
   type InsertClientSubmission,
   type Cagnotte,
@@ -36,8 +39,18 @@ export interface IStorage {
   createOpticien(opticien: InsertOpticien): Promise<Opticien>;
   updateOpticien(id: number, opticien: Partial<InsertOpticien>): Promise<Opticien | undefined>;
 
+  // Client methods
+  getClient(id: number): Promise<Client | undefined>;
+  getClientByEmail(email: string): Promise<Client | undefined>;
+  createClient(client: InsertClient): Promise<Client>;
+  updateClientOptician(clientId: number, opticienId: number): Promise<void>;
+  getClientCagnottes(clientId: number): Promise<Cagnotte[]>;
+  getClientPaiements(clientId: number): Promise<Paiement[]>;
+  getClientLivraisons(clientId: number): Promise<Livraison[]>;
+  getClientSubmissions(clientId: number): Promise<ClientSubmission[]>;
+
   // Client Submission methods
-  getClientSubmissions(opticienId: number): Promise<ClientSubmission[]>;
+  getOpticienClientSubmissions(opticienId: number): Promise<ClientSubmission[]>;
   getClientSubmission(id: number): Promise<ClientSubmission | undefined>;
   createClientSubmission(submission: InsertClientSubmission): Promise<ClientSubmission>;
   updateClientSubmission(id: number, submission: Partial<InsertClientSubmission>): Promise<ClientSubmission | undefined>;
@@ -120,8 +133,66 @@ export class DatabaseStorage implements IStorage {
     return opticien || undefined;
   }
 
+  // Client methods
+  async getClient(id: number): Promise<Client | undefined> {
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
+    return client || undefined;
+  }
+
+  async getClientByEmail(email: string): Promise<Client | undefined> {
+    const [client] = await db.select().from(clients).where(eq(clients.email, email));
+    return client || undefined;
+  }
+
+  async createClient(insertClient: InsertClient): Promise<Client> {
+    const [client] = await db
+      .insert(clients)
+      .values(insertClient)
+      .returning();
+    return client;
+  }
+
+  async updateClientOptician(clientId: number, opticienId: number): Promise<void> {
+    await db
+      .update(clients)
+      .set({ opticienId })
+      .where(eq(clients.id, clientId));
+  }
+
+  async getClientCagnottes(clientId: number): Promise<Cagnotte[]> {
+    return await db
+      .select()
+      .from(cagnottes)
+      .where(eq(cagnottes.clientId, clientId))
+      .orderBy(desc(cagnottes.dateCreation));
+  }
+
+  async getClientPaiements(clientId: number): Promise<Paiement[]> {
+    return await db
+      .select()
+      .from(paiements)
+      .where(eq(paiements.clientId, clientId))
+      .orderBy(desc(paiements.dateCreation));
+  }
+
+  async getClientLivraisons(clientId: number): Promise<Livraison[]> {
+    return await db
+      .select()
+      .from(livraisons)
+      .where(eq(livraisons.clientId, clientId))
+      .orderBy(desc(livraisons.dateCreation));
+  }
+
+  async getClientSubmissions(clientId: number): Promise<ClientSubmission[]> {
+    return await db
+      .select()
+      .from(clientSubmissions)
+      .where(eq(clientSubmissions.clientId, clientId))
+      .orderBy(desc(clientSubmissions.createdAt));
+  }
+
   // Client Submission methods
-  async getClientSubmissions(opticienId: number): Promise<ClientSubmission[]> {
+  async getOpticienClientSubmissions(opticienId: number): Promise<ClientSubmission[]> {
     return await db
       .select()
       .from(clientSubmissions)

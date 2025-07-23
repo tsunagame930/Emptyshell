@@ -33,22 +33,69 @@ export default function ClientLogin() {
     setIsLoading(true);
 
     try {
-      // Simuler la connexion/inscription client
-      localStorage.setItem('clientData', JSON.stringify({
-        ...formData,
-        id: Date.now()
-      }));
-      
-      toast({
-        title: isLogin ? "Connexion réussie" : "Compte créé",
-        description: isLogin ? "Bienvenue" : "Votre compte client a été créé avec succès"
-      });
-      
-      setLocation("/client-documents");
+      if (isLogin) {
+        const response = await fetch('/api/client/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: formData.email, password: formData.password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('clientData', JSON.stringify(data.client));
+          localStorage.setItem('userType', 'client');
+          
+          toast({
+            title: "Connexion réussie",
+            description: "Bienvenue dans votre espace client"
+          });
+          
+          setLocation("/client-dashboard");
+        } else {
+          const error = await response.json();
+          toast({
+            title: "Erreur de connexion",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else {
+        const response = await fetch('/api/client/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('clientData', JSON.stringify(data.client));
+          localStorage.setItem('userType', 'client');
+          
+          toast({
+            title: "Compte créé",
+            description: "Votre compte client a été créé avec succès"
+          });
+          
+          setLocation("/client-documents");
+        } else {
+          const error = await response.json();
+          toast({
+            title: "Erreur d'inscription",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      }
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: "Une erreur de connexion est survenue",
         variant: "destructive"
       });
     } finally {

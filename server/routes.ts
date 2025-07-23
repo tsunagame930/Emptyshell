@@ -13,6 +13,13 @@ import {
   updateClientSubmission, 
   deleteClientSubmission,
   uploadFiles 
+} from './controllers/clientSubmissionController';
+import {
+  registerClient,
+  loginClient,
+  getClientProfile,
+  getClientData,
+  submitClientRequest
 } from './controllers/clientController';
 import { 
   getCagnottes, 
@@ -56,6 +63,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/register', register);
   app.post('/api/auth/login', login);
   app.get('/api/auth/profile', authMiddleware, getProfile);
+  
+  // Client routes (public)
+  app.post('/api/client/register', registerClient);
+  app.post('/api/client/login', loginClient);
+  
+  // Client routes (protected)
+  app.get('/api/client/profile', authMiddleware, getClientProfile);
+  app.get('/api/client/data', authMiddleware, getClientData);
+  app.post('/api/client/submit-request', authMiddleware, submitClientRequest);
 
   // Opticien routes (protected)
   app.put('/api/opticien/profile', authMiddleware, updateProfile);
