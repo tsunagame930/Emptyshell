@@ -12,10 +12,15 @@ import Paiements from "@/pages/paiements";
 import Livraisons from "@/pages/livraisons";
 import Produits from "@/pages/produits";
 import Profil from "@/pages/profil";
+import ClientLogin from "@/pages/client-login";
+import ClientDocuments from "@/pages/client-documents";
+import ClientOpticians from "@/pages/client-opticians";
+import ClientConfirmation from "@/pages/client-confirmation";
 
 function Router() {
   return (
     <Switch>
+      {/* Routes opticien */}
       <Route path="/login" component={Login} />
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
@@ -25,6 +30,13 @@ function Router() {
       <Route path="/livraisons" component={Livraisons} />
       <Route path="/produits" component={Produits} />
       <Route path="/profil" component={Profil} />
+      
+      {/* Routes client */}
+      <Route path="/client-login" component={ClientLogin} />
+      <Route path="/client-documents" component={ClientDocuments} />
+      <Route path="/client-opticians" component={ClientOpticians} />
+      <Route path="/client-confirmation" component={ClientConfirmation} />
+      
       <Route component={NotFound} />
     </Switch>
   );

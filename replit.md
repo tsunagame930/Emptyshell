@@ -21,6 +21,16 @@ Preferred communication style: Simple, everyday language.
 - Made Emptyshell logo in sidebar clickable to navigate back to dashboard
 - Added hover effect for better user experience
 
+### Client Interface Implementation (2025-01-23)
+- Created complete client-side interface for end users
+- Client login/registration system (/client-login)
+- Document upload page for ordonnance and carte mutuelle (/client-documents)
+- Optician selection page with 6 example opticians (/client-opticians)
+- Confirmation page showing request summary (/client-confirmation)
+- Added mock optician data with realistic details, specialties, and brands
+- Implemented search functionality for opticians by name, city, or specialty
+- Client flow: Login → Upload Documents → Choose Optician → Confirmation
+
 ## System Architecture
 
 ### Frontend Architecture
