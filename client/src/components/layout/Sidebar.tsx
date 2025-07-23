@@ -33,12 +33,14 @@ export default function Sidebar() {
     <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
       {/* Logo Header */}
       <div className="flex items-center justify-center h-16 px-6 border-b border-gray-200">
-        <div className="flex items-center">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Glasses className="w-4 h-4 text-white" />
-          </div>
-          <span className="ml-3 text-xl font-semibold text-gray-900">Emptyshell</span>
-        </div>
+        <Link href="/dashboard">
+          <a className="flex items-center hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Glasses className="w-4 h-4 text-white" />
+            </div>
+            <span className="ml-3 text-xl font-semibold text-gray-900">Emptyshell</span>
+          </a>
+        </Link>
       </div>
 
       {/* Navigation */}

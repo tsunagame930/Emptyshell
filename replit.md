@@ -17,6 +17,10 @@ Preferred communication style: Simple, everyday language.
 - Fixed JWT token generation TypeScript errors
 - Fixed profile update form TypeScript issues
 
+### Logo Navigation Enhancement (2025-01-23)
+- Made Emptyshell logo in sidebar clickable to navigate back to dashboard
+- Added hover effect for better user experience
+
 ## System Architecture
 
 ### Frontend Architecture
