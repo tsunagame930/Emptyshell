@@ -1,0 +1,44 @@
+Crée-moi une application React complète avec Tailwind CSS, TypeScript et React Router, qui sert d’interface pour des opticiens partenaires intégrés à la plateforme Emptyshell.
+
+🎯 Objectif : créer un cockpit professionnel et moderne inspiré de Pennylane, permettant à chaque opticien connecté de :
+
+- Gérer les demandes clients (upload ordonnance + mutuelle)
+- Créer et suivre des cagnottes optiques
+- Suivre les paiements et le reste à charge
+- Gérer les livraisons
+- Gérer leur propre stock de montures/verres
+- Modifier leurs informations (profil opticien)
+
+🧱 Stack :
+- React + TypeScript
+- React Router v6
+- Tailwind CSS (design épuré comme Pennylane)
+- Composants réutilisables (Table, Sidebar, Header, Card)
+- Données mockées localement dans un fichier JSON (pas besoin de backend pour l’instant)
+
+🖥️ Structure des pages (routes) :
+- `/dashboard` : vue d’ensemble avec cards + graphiques mockés
+- `/demandes` : liste des clients ayant envoyé ordonnance + mutuelle
+- `/cagnottes` : suivi des cagnottes créées
+- `/paiements` : paiements reçus / restes à charge
+- `/livraisons` : commandes à expédier
+- `/produits` : gestion du stock (ajout/suppression de montures)
+- `/profil` : informations de l’opticien
+
+📐 Design :
+- Sidebar fixe à gauche avec navigation verticale
+- Header sur chaque page avec le nom “Emptyshell”
+- Tableaux responsives avec boutons d’action
+- Graphiques mockés avec Chart.js ou autre lib simple
+- Design moderne, minimaliste, très lisible, police pro
+
+💡 Fonctionnalités :
+- Composant `Table.tsx` réutilisable
+- Composant `CardStat.tsx` pour dashboard
+- Composant `Sidebar.tsx` avec icônes et navigation active
+- Données simulées dans des fichiers `.ts` dans `lib/data/`
+- Aucun backend pour l’instant (toutes actions simulées)
+
+⚠️ Ne pas générer de texte explicatif. Génère uniquement le code complet, propre et modulaire.
+
+Objectif : une interface opticien pro, prête à être branchée sur backend Emptyshell, avec UX inspirée de Pennylane.
