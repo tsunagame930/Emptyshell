@@ -113,6 +113,7 @@ export default function Login() {
                     id="telephone"
                     name="telephone"
                     type="tel"
+                    required={!isLogin}
                     value={formData.telephone}
                     onChange={handleInputChange}
                   />
@@ -152,6 +153,7 @@ export default function Login() {
                     id="adresse"
                     name="adresse"
                     type="text"
+                    required={!isLogin}
                     value={formData.adresse}
                     onChange={handleInputChange}
                   />
@@ -163,6 +165,7 @@ export default function Login() {
                       id="ville"
                       name="ville"
                       type="text"
+                      required={!isLogin}
                       value={formData.ville}
                       onChange={handleInputChange}
                     />
@@ -173,13 +176,14 @@ export default function Login() {
                       id="codePostal"
                       name="codePostal"
                       type="text"
+                      required={!isLogin}
                       value={formData.codePostal}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="siret">SIRET</Label>
+                  <Label htmlFor="siret">SIRET (optionnel)</Label>
                   <Input
                     id="siret"
                     name="siret"

@@ -102,7 +102,7 @@ export default function Profil() {
     e.preventDefault();
     
     // Create update object, removing empty password
-    const updateData = { ...formData };
+    const updateData: any = { ...formData };
     if (!updateData.password) {
       delete updateData.password;
     }

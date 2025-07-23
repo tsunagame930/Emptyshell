@@ -11,7 +11,15 @@ const loginSchema = z.object({
 });
 
 const registerSchema = insertOpticienSchema.extend({
-  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+  nom: z.string().min(1, 'Le nom est obligatoire'),
+  prenom: z.string().min(1, 'Le prénom est obligatoire'),
+  email: z.string().email('Email invalide'),
+  telephone: z.string().min(1, 'Le téléphone est obligatoire'),
+  adresse: z.string().min(1, 'L\'adresse est obligatoire'),
+  ville: z.string().min(1, 'La ville est obligatoire'),
+  codePostal: z.string().min(1, 'Le code postal est obligatoire'),
+  siret: z.string().optional() // SIRET optionnel
 });
 
 export const register = async (req: Request, res: Response) => {

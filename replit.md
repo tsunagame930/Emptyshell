@@ -8,6 +8,15 @@ This is a professional optician partner interface for the Emptyshell platform, b
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### Registration Form Validation (2025-01-23)
+- Updated registration schema to make most fields required except SIRET
+- Modified frontend form to show required validation for: nom, prenom, email, telephone, adresse, ville, codePostal
+- SIRET field marked as optional in both backend validation and UI label
+- Fixed JWT token generation TypeScript errors
+- Fixed profile update form TypeScript issues
+
 ## System Architecture
 
 ### Frontend Architecture
